@@ -1,0 +1,18 @@
+#Temporary dir
+/pictures/
+/references/
+/results/
+
+#Environment variables
+.env
+
+#Python Virtual Environment
+venv/
+env/
+.venv/
+
+#Python Cache
+__pycache__
+*.pyc
+
+.DS_Store
