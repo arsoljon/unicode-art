@@ -37,10 +37,12 @@ def setup_asci_range(colors_sorted):
 
 rgb_asci_map = setup_asci_range(colors_sorted)
 
-def printImage(small, rgb_asci_map, scale = 4):
+def printImage(small, rgb_asci_map, scale = 2):
     small_width, small_height = small.size
     small_pixels = small.load()
+    full_art = []
     for y in range(small_height):
+        sub_art = []
         for x in range(small_width):
             current_rgb = small_pixels[x,y]
             current_r = current_rgb[0]
@@ -49,7 +51,11 @@ def printImage(small, rgb_asci_map, scale = 4):
                 r_max = rgb_asci_map[key][1]
                 if(current_r >= r_min and current_r < r_max):
                     for i in range(scale):
-                        print(key, end="")
-        print("\n")
+                        sub_art.append(str(key))
+                        #print(key, end="")
+        full_art.append("".join(sub_art))
+        #print("\n")
+    for line in full_art:
+        print(line)
 
 printImage(small, rgb_asci_map)
