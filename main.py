@@ -1,31 +1,36 @@
 #258-259 columns then each row 0-f
-def setupBlockElements(elements):
+def setupBlockElements():
+    elements = []
     start = 0x2580
     end = 0x259F
     for i in range(start, end + 1):
         elements.append(chr(i))
     return elements
 
-def setupBraileElements(elements):
+def setupBraileElements():
+    elements = []
     start = 0x2800
     end = 0x28FF
     for i in range(start, end + 1):
         elements.append(chr(i))
     return elements
 
-def setupBoxElements(elements):
+def setupBoxElements():
+    elements = []
     start = 0x2500
     end = 0x257F
     for i in range(start, end + 1):
         elements.append(chr(i))
     return elements
 
-def setupLegacyElements(elements):
+def setupLegacyElements():
+    elements = []
     start = 0x1FB00
     end = 0x1FBFA
     for i in range(start, end + 1):
         elements.append(chr(i))
     return elements
+
 def printElements(elements):
     for i in elements:
         print(i+" ", end="")
@@ -38,6 +43,7 @@ def fractalPlants():
 #Boids flocking simulation
 def boidsFlocking():
     pass
+
 def getGoodBoxElements(box_elements):
     #box-elements main directions
     vertical = box_elements[2]
@@ -61,68 +67,68 @@ def getGoodBoxElements(box_elements):
 
 
 
-block_elements = []
-block_elements = setupBlockElements(block_elements)
-braile_elements = []
-braile_elements = setupBraileElements(braile_elements)
-box_elements = []
-box_elements = setupBoxElements(box_elements)
-legacy_elements = []
-legacy_elements = setupLegacyElements(legacy_elements) 
-#printElements(block_elements)
-#printElements(box_elements)
-#printElements(braile_elements)
-#printElements(legacy_elements)
+block_elements = setupBlockElements()
+braile_elements = setupBraileElements()
+box_elements = setupBoxElements()
+legacy_elements = setupLegacyElements() 
 
 #change photo into asci art. 
 #   -figure out which asci elements take most to least pixels per character
 #   -hardcode each asci that takes the most to least pixel per character
 #   -intensity level represents how many character will be used to represent different levels of intensity. 
-#   -pixelize each image to make it easier to change to asci characters#    -preprocess each image to black and white to create intensity level of light. 
+#   -pixelize each image to make it easier to change to asci characters
+#   -preprocess each image to black and white to create intensity level of light. 
 
 from PIL import Image
 img_location = "pictures/shinji.jpg"
 img = Image.open(img_location)
+img.show()
 pixels = img.load()
 width, height = img.size
 pixel_size = 5
 bw = img.convert("L")
-
+bw.show()
 small = bw.resize((img.width // pixel_size, img.height // pixel_size), resample = Image.NEAREST)
 
 small = small.quantize(colors=10).convert("RGB")
 colors = small.getcolors(maxcolors=10)
 colors_sorted = sorted(colors, key=lambda x: sum(x[1]))
 pixelated = small.resize(img.size, Image.NEAREST)
-pixelated.save('temp.jpg')
-#pixelated.show()
 small.show()
+pixelated.show()
 
 small_pixels = small.load()
 small_width, small_height = small.size
 
-rgb_asci_map = {}
-color_offset = 255 // len(colors_sorted)
-color_range = []
-basic_asci = [' ', '.', ',', ':', ';', '+', '*', '?', '%', 'S', '#', '@']
-#setup max color range for each character. 
-#' ' . , : ; + * ? % S # @
-for i in range(len(colors_sorted)):
-    color_range.append(color_offset*(i+1))
-    max_rgb = color_offset*(i+1)
-    min_rgb = color_offset*(i)
-    rgb_asci_map[basic_asci[i]] = [min_rgb, max_rgb]
+def setup_asci_range(colors_sorted):
+    #setup max color range for each character. 
+    #' ' . , : ; + * ? % S # @
+    rgb_asci_map = {}
+    color_offset = 255 // len(colors_sorted)
+    basic_asci = [' ', '.', ',', ':', ';', '+', '*', '?', '%', 'S', '#', '@']
+    if (len(colors_sorted) <= len(basic_asci)):
+        for i in range(len(colors_sorted)):
+            max_rgb = color_offset*(i+1)
+            min_rgb = color_offset*(i)
+            rgb_asci_map[basic_asci[i]] = [min_rgb, max_rgb]
+    return rgb_asci_map
 
-scale = 4
-for y in range(small_height):
-    for x in range(small_width):
-        current_rgb = small_pixels[x,y]
-        current_r = current_rgb[0]
-        for key in rgb_asci_map:
-            r_min = rgb_asci_map[key][0]
-            r_max = rgb_asci_map[key][1]
-            if(current_r >= r_min and current_r < r_max):
-                for i in range(scale):
-                    print(key, end="")
-    print("\n")
+rgb_asci_map = setup_asci_range(colors_sorted)
+
+def printImage(small, rgb_asci_map, scale = 4):
+    small_width, small_height = small.size
+    small_pixels = small.load()
+    for y in range(small_height):
+        for x in range(small_width):
+            current_rgb = small_pixels[x,y]
+            current_r = current_rgb[0]
+            for key in rgb_asci_map:
+                r_min = rgb_asci_map[key][0]
+                r_max = rgb_asci_map[key][1]
+                if(current_r >= r_min and current_r < r_max):
+                    for i in range(scale):
+                        print(key, end="")
+        print("\n")
+
+printImage(small, rgb_asci_map)
 small.show()
