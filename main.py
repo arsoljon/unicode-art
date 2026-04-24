@@ -76,7 +76,7 @@ def printImage(small, rgb_asci_map, scale = 2):
     return full_art, truth_keeper, full_art_codes
 
 
-def updateImage(full_art, truth_keeper, full_art_codes, offset = 1, changes = 1, maxChanges = 300, sleep = 0.1):
+def updateImage(truth_keeper, full_art_codes, offset = 1, changes = 1, maxChanges = 300, sleep = 0.1):
     char_min = 32
     char_max = 126
     #print from the full code set
@@ -103,15 +103,12 @@ def updateImage(full_art, truth_keeper, full_art_codes, offset = 1, changes = 1,
         print(f"\033[J", end="")
         time.sleep(sleep)
     #print from the basic full text set
-    for line in full_art:
-        pass
-        #print(line)
 
 #def printImage(small, rgb_asci_map, scale = 2):
 #    pass
     
 rgb_asci_map = setup_asci_range(colors_sorted)
 full_art, truth_keeper, full_art_codes = printImage(small, rgb_asci_map)
-updateImage(full_art, truth_keeper,full_art_codes)
+updateImage(truth_keeper,full_art_codes)
 
 
